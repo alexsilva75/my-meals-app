@@ -10,6 +10,7 @@ import { CATEGORIES, MEALS } from '../data/dummy-data'
 import Colors from '../constants/Colors'
 
 import MealItem from '../components/MealItem'
+import MealList from '../components/MealList'
 
 const CategoryMealsScreen = props => {
     const { navigation } = props
@@ -20,33 +21,11 @@ const CategoryMealsScreen = props => {
         return (meal.categoryIds.indexOf(catId) >= 0)
     })
 
-    const onSelectMealHandler = (meal) =>{
-        navigation.navigate({
-            routeName: 'MealDetail',
-            params: {meal}
-        })
-    }
+   
 
-    const renderMeal = (mealItem) => {
-        return (
-            <MealItem 
-                meal={mealItem.item} 
-                onSelectMeal={()=>{onSelectMealHandler(mealItem.item)}} />
-        )
-    }
-
+    
     return (
-        <View style={styles.screen}>
-         
-            <FlatList 
-                data={displayedMeals} 
-                renderItem={mealItem => renderMeal(mealItem)}
-                style={{width: '100%'}}
-                contentContainerStyle={{alignItems: 'center'}}
-                />
-            <Button title='Go to Meal Details!' onPress={() => navigation.navigate('MealDetail')} />
-            <Button title='Go Back' onPress={() => { navigation.pop() }} />
-        </View>
+        <MealList meals={displayedMeals} navigation={navigation}/>
     )
 }
 
@@ -62,12 +41,6 @@ CategoryMealsScreen.navigationOptions = (navigationData) => {
     }
 }
 
-const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-})
+
 
 export default CategoryMealsScreen
