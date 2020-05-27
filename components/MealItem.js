@@ -10,7 +10,7 @@ import {
 import DefaultText from './DefaultText'
 
 const MealItem = props => (
-    <View style={styles.mealItem}>
+    <View  style={styles.mealItem}>
         <TouchableOpacity onPress={props.onSelectMeal}>
             <View>
                 <View style={{ ...styles.mealRow, ...styles.mealHeader }}>

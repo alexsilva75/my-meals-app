@@ -1,18 +1,20 @@
-import React from 'react'
+import React, { useEffect, useCallback } from 'react'
 import {
     ScrollView,
     View,
     Image,
     Text,
-    Button,
     StyleSheet
 } from 'react-native'
 
+import {useDispatch,useSelector} from 'react-redux'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 
-import MealItem from '../components/MealItem'
 import CustomHeaderButton from '../components/CustomHeaderButton'
 import DefaultText from '../components/DefaultText'
+import {toggleFavorite} from '../store/actions/mealsActions'
+
+
 
 const ListItem = props => (
     <View style={styles.listItem}>
@@ -24,6 +26,26 @@ const ListItem = props => (
 const MealDetailScreen = props => {
     const { navigation } = props
     const meal = navigation.getParam('meal')
+
+    const mealId = meal.id
+    
+    const isFavorite = useSelector(state => state.meals.favoriteMeals.some(meal => meal.id === mealId))  
+
+    const dispatch = useDispatch()
+
+    const toggleFavoriteHandler = useCallback(() => {
+        dispatch( toggleFavorite(mealId))
+    }, [dispatch, mealId])
+
+    useEffect(() => {
+        props.navigation.setParams({toggleFav: toggleFavoriteHandler})
+    },[toggleFavoriteHandler])
+
+    useEffect(() => {
+        props.navigation.setParams({isFavorite})
+    },[isFavorite])
+
+
     return (
         <ScrollView>
             <Image source={{ uri: meal.imageUrl }} style={styles.image} />
@@ -41,6 +63,26 @@ const MealDetailScreen = props => {
                  (<ListItem key={step}>{step}</ListItem>))}
         </ScrollView>
     )
+}
+
+MealDetailScreen.navigationOptions = navData => {
+    const { navigation } = navData
+
+    const meal = navigation.getParam('meal')
+ 
+    const toggleFavorite = navigation.getParam('toggleFav')
+    const isFavorite = navigation.getParam('isFavorite')
+    return {
+        headerTitle: meal.title,
+        headerRight:
+            <HeaderButtons HeaderButtonComponent={CustomHeaderButton} >
+                <Item
+                    title='Favorite'
+                    iconName={isFavorite ? 'ios-star' : 'ios-star-outline'}
+                    onPress={toggleFavorite}
+                />
+            </HeaderButtons>
+    }
 }
 
 const styles = StyleSheet.create({
@@ -67,26 +109,5 @@ const styles = StyleSheet.create({
         padding: 10
     }
 })
-
-
-
-MealDetailScreen.navigationOptions = navData => {
-    const { navigation } = navData
-
-    const meal = navigation.getParam('meal')
-    return {
-        headerTitle: meal.title,
-        headerRight:
-            <HeaderButtons HeaderButtonComponent={CustomHeaderButton} >
-                <Item
-                    title='Favorite'
-                    iconName='ios-star'
-                    onPress={() => {
-
-                    }}
-                />
-            </HeaderButtons>
-    }
-}
 
 export default MealDetailScreen
